@@ -60,3 +60,15 @@ Tras la ejecución, el script generará nuevos archivos en el directorio out/:
 - isolation.log: Registro de los dispositivos que fueron aislados automáticamente.
 
 - templates/analyst_summary.j2: Plantilla Jinja2 utilizada para generar los resúmenes en Markdown.
+
+
+## Deficiencias y posibles mejoras:
+
+
+- Lógica de enriquecimiento "hardcodeada": Actualmente usa rutas fijas a archivos mock. Se podría hacer dinámico según tipo y valor de indicador, o incluso integrar llamadas a APIs reales usando connectors.yml.
+
+- Alineado con lo anterior -> Configuración no utilizada: configs/connectors.yml no se integra al script; Esto seguramente seria remplazado por una integracion por API contra la fuente de CTI.
+
+- Manejo de errores: Hoy el script asume que los archivos siempre existen y son correctos. Usar try...except para errores como FileNotFoundError o json.JSONDecodeError haría el código más robusto.
+
+- Refactorización de código: Hay repetición en la función enrich_indicators y la verificación de allowlists. Crear una función genérica para manejar distintos tipos de indicadores reduciría duplicación y mejoraría mantenibilidad.
