@@ -1,0 +1,49 @@
+# Reporte de Incidente: {{ incident.id }}
+
+## Detalles del Incidente
+| Campo | Valor |
+| :--- | :--- |
+| **Título** | {{ incident.title }} |
+| **Fuente del Alerta** | {{ incident.source_alert.source }} |
+| **ID de Alerta** | {{ incident.source_alert.alert_id }} |
+| **Tipo de Alerta** | {{ incident.type }} |
+| **Hostname del Activo** | {{ incident.asset.hostname | default('N/A') }} |
+| **ID del Dispositivo** | {{ incident.asset.device_id | default('N/A') }} |
+| **IP del Activo** | {{ incident.asset.ip | default('N/A') }} |
+
+## Triage
+| Campo | Valor |
+| :--- | :--- |
+| **Severidad** | {{ incident.triage.severity }} |
+| **Bucket** | {{ incident.triage.bucket }} |
+| **Tags** | {{ incident.triage.tags | join(', ') | default('N/A') }} |
+| **Suprimido** | {{ 'Sí' if incident.triage.suppresed else 'No' }} |
+
+## Indicadores de Compromiso (IOCs)
+{% if incident.indicators %}
+| Tipo | Valor | Riesgo | Origen | En Allowlist |
+| :--- | :--- | :--- | :--- | :--- |
+{% for indicator in incident.indicators %}
+| {{ indicator.type }} | {{ indicator.value }} | **{{ indicator.risk.veredict }}** ({{ indicator.risk.score }}) | {{ indicator.sources | join(', ') }} | {{ 'Sí' if indicator.get('allowlisted') else 'No' }} |
+{% endfor %}
+{% else %}
+No se encontraron indicadores de compromiso.
+{% endif %}
+
+## Técnicas MITRE ATT&CK
+{% if incident.MITRE.Techniques %}
+- **Técnicas**: {{ incident.MITRE.Techniques | join(', ') }}
+{% else %}
+No se mapearon técnicas MITRE ATT&CK.
+{% endif %}
+
+## Acciones Tomadas
+{% if incident.actions %}
+| Acción | Objetivo |
+| :--- | :--- | :--- |
+{% for action in incident.actions %}
+| {{ action.type }} | {{ action.target }} |
+{% endfor %}
+{% else %}
+No se tomaron acciones automatizadas.
+{% endif %}
